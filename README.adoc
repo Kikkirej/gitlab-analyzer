@@ -1,0 +1,12 @@
+= Gitlab-Analyzer
+
+This tool connects to the GitLab-API, gets all projects and handles them with a filter.
+With these tools there is the possibility to then run.
+
+== Settings
+|===
+| Environment Variable | Description | Example
+| GITLAB_BASE_URL | Gitlab-Base-URL | https://gitlab.domain.com
+| GITLAB_PERSONAL_TOKEN | Personal Access Token | /
+| GITLAB_PROJECT_ROOT | Namespace-Prefix |  /orgunit
+|===

@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 const GitlabBaseUrlEnvName = "GITLAB_BASE_URL"
@@ -11,16 +12,38 @@ const GitlabPersonalTokenEnvName = "GITLAB_PERSONAL_TOKEN"
 const GitlabProjectRootEnvName = "GITLAB_PROJECT_ROOT"
 const WorkingDirEnvName = "WORKING_DIR"
 
+const PostgresHostEnvName = "POSTGRES_HOST"
+const PostgresUserEnvName = "POSTGRES_USER"
+const PostgresPasswordEnvName = "POSTGRES_PASSWORD"
+const PostgresDbnameEnvName = "POSTGRES_DBNAME"
+const PostgresPortEnvName = "POSTGRES_PORT"
+const PostgresSslmodeEnvName = "POSTGRES_SSLMODE"
+
 type SettingsStruct struct {
+	Initialized         bool
 	GitlabBaseurl       string
 	GitlabPersonalToken string
 	GitlabProjectRoot   string
 	WorkingDir          string
+
+	PostgresHost     string
+	PostgresUser     string
+	PostgresPassword string
+	PostgresDbname   string
+	PostgresPort     string
+	PostgresSslmode  string
 }
 
-var Struct = SettingsStruct{}
+var Struct = SettingsStruct{Initialized: false}
+
+var settingsInit sync.Mutex
 
 func InitSettings() {
+	settingsInit.Lock()
+	if Struct.Initialized {
+		return
+	}
+	Struct.Initialized = true
 	gitlabBaseUrl := os.Getenv(GitlabBaseUrlEnvName)
 
 	if gitlabBaseUrl == "" {
@@ -59,5 +82,26 @@ func InitSettings() {
 		} else {
 			Struct.WorkingDir = workingDir
 		}
+	}
+
+	initPostgresSettings()
+	settingsInit.Unlock()
+}
+
+func initPostgresSettings() {
+	Struct.PostgresHost = os.Getenv(PostgresHostEnvName)
+	if Struct.PostgresHost == "" {
+		Struct.PostgresHost = "localhost"
+	}
+	Struct.PostgresPort = os.Getenv(PostgresPortEnvName)
+	if Struct.PostgresPort == "" {
+		Struct.PostgresPort = "5432"
+	}
+	Struct.PostgresUser = os.Getenv(PostgresUserEnvName)
+	Struct.PostgresPassword = os.Getenv(PostgresPasswordEnvName)
+	Struct.PostgresDbname = os.Getenv(PostgresDbnameEnvName)
+	Struct.PostgresSslmode = os.Getenv(PostgresSslmodeEnvName)
+	if Struct.PostgresSslmode == "" {
+		Struct.PostgresSslmode = "disable"
 	}
 }

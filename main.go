@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/xanzy/go-gitlab"
+	"gitlabAnalyzer/git"
+	"gitlabAnalyzer/git/gitlab_api"
 	"gitlabAnalyzer/settings"
 	"log"
+	"os"
 	"strings"
 )
-import "gitlabAnalyzer/gitlab_api"
-
-// TODO https://git-scm.com/book/en/v2/Appendix-B:-Embedding-Git-in-your-Applications-go-git
 
 func main() {
 	settings.InitSettings()
@@ -17,10 +17,24 @@ func main() {
 	for _, project := range projects {
 		if shouldBeAnalyzed(project) {
 			log.Println("analyze Project:", project.PathWithNamespace, " (", project.ID, ")")
-
+			handleProject(project)
 		} else {
-			log.Println("project does not meet criteria:", project.PathWithNamespace, "(", project.ID, ")")
+			//log.Println("project does not meet criteria:", project.PathWithNamespace, "(", project.ID, ")")
 		}
+	}
+}
+
+func handleProject(project *gitlab.Project) {
+	clonePath, _ := git.Clone(project)
+	if clonePath == "error" {
+		return
+	}
+
+	log.Println(clonePath)
+
+	err := os.RemoveAll(clonePath)
+	if err != nil {
+		log.Println("deletion not possible:", clonePath)
 	}
 }
 

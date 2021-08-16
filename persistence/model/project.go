@@ -1,12 +1,10 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
 type Project struct {
-	gorm.Model
 	ID                                        int `gorm:"primaryKey"`
 	Description                               string
 	SSHURLToRepo                              string

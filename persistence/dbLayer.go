@@ -26,11 +26,11 @@ func initDb() *gorm.DB {
 	}
 	errAutoMigrate = dbCon.AutoMigrate(&model.Project{})
 	if errAutoMigrate != nil {
-		log.Fatalln("error while initalizing to database:", errAutoMigrate)
+		log.Fatalln("error while initializing to database:", errAutoMigrate)
 	}
 	err := dbCon.AutoMigrate(&model.Branch{})
 	if err != nil {
-		log.Fatalln("error while initalizing to database:", errAutoMigrate)
+		log.Fatalln("error while initializing to database:", errAutoMigrate)
 	}
 	return dbCon
 }
@@ -123,4 +123,18 @@ func updateProjectFields(project *model.Project, apiInformation *gitlab.Project)
 	project.PackagesEnabled = apiInformation.PackagesEnabled
 	project.AutocloseReferencedIssues = apiInformation.AutocloseReferencedIssues
 	project.SuggestionCommitMessage = apiInformation.SuggestionCommitMessage
+}
+
+func CreateAnalysisAndConnectToBranch(branch *model.Branch) *model.AnalysisResult {
+	analysisResult := &model.AnalysisResult{}
+	analysisResult.BranchId = branch.ID
+	analysisResult.Version = settings.CurrentVersion()
+	db.Create(analysisResult)
+	branch.CurrentAnalysis = *analysisResult
+	db.Save(branch)
+	return analysisResult
+}
+
+func SaveAnalysisResult(result *model.AnalysisResult) {
+	db.Save(result)
 }

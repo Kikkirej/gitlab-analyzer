@@ -20,6 +20,12 @@ const PostgresDbnameEnvName = "POSTGRES_DBNAME"
 const PostgresPortEnvName = "POSTGRES_PORT"
 const PostgresSslmodeEnvName = "POSTGRES_SSLMODE"
 
+const VERSION uint = 1
+
+func CurrentVersion() uint {
+	return VERSION
+}
+
 type SettingsStruct struct {
 	Initialized         bool
 	GitlabBaseurl       string

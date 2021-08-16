@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/xanzy/go-gitlab"
+	"gitlabAnalyzer/analyzer"
+	"gitlabAnalyzer/dto"
 	"gitlabAnalyzer/git"
 	"gitlabAnalyzer/git/gitlab_api"
 	"gitlabAnalyzer/persistence"
@@ -39,7 +41,7 @@ func handleProject(project *gitlab.Project) {
 			if err != nil {
 				continue
 			}
-			println(branchDb)
+			analyzer.AnalyzeBranch(dto.AnalysisData{dbProject, branchDb, clonePath, repo})
 		} else {
 			persistence.DBObjectOfBranch(dbProject, branch, false)
 		}

@@ -10,3 +10,13 @@ This tool connects to the GitLab-API, gets all projects and handles them with a 
 | GITLAB_PROJECT_ROOT | Namespace-Prefix |  /orgunit
 | WORKING_DIR | Working Directory | "C:\temp" oder "/tmp/"
 |===
+=== Datenbank
+|===
+| Environment
+| POSTGRES_HOST
+| POSTGRES_USER
+| POSTGRES_PASSWORD
+| POSTGRES_DBNAME
+| POSTGRES_PORT
+| POSTGRES_SSLMODE
+|===

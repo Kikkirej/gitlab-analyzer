@@ -1,11 +1,14 @@
 package model
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Project struct {
+	gorm.Model
 	ID                                        int `gorm:"primaryKey"`
 	Description                               string
-	DefaultBranch                             string
 	SSHURLToRepo                              string
 	HTTPURLToRepo                             string
 	WebURL                                    string

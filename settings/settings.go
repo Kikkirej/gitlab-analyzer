@@ -11,6 +11,7 @@ const GitlabBaseUrlEnvName = "GITLAB_BASE_URL"
 const GitlabPersonalTokenEnvName = "GITLAB_PERSONAL_TOKEN"
 const GitlabProjectRootEnvName = "GITLAB_PROJECT_ROOT"
 const WorkingDirEnvName = "WORKING_DIR"
+const BranchesToAnalyzeEnvName = "BRANCHES_TO_ANALYZE"
 
 const PostgresHostEnvName = "POSTGRES_HOST"
 const PostgresUserEnvName = "POSTGRES_USER"
@@ -25,6 +26,7 @@ type SettingsStruct struct {
 	GitlabPersonalToken string
 	GitlabProjectRoot   string
 	WorkingDir          string
+	BranchesToAnalyze   []string
 
 	PostgresHost     string
 	PostgresUser     string
@@ -41,6 +43,7 @@ var settingsInit sync.Mutex
 func InitSettings() {
 	settingsInit.Lock()
 	if Struct.Initialized {
+		settingsInit.Unlock()
 		return
 	}
 	Struct.Initialized = true
@@ -82,6 +85,14 @@ func InitSettings() {
 		} else {
 			Struct.WorkingDir = workingDir
 		}
+	}
+
+	branchesToAnalyze := os.Getenv(BranchesToAnalyzeEnvName)
+	if branchesToAnalyze != "" {
+		branchesToAnalyze = strings.ReplaceAll(branchesToAnalyze, ",", ";")
+		Struct.BranchesToAnalyze = strings.Split(branchesToAnalyze, ";")
+	} else {
+		Struct.BranchesToAnalyze = []string{}
 	}
 
 	initPostgresSettings()

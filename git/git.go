@@ -2,6 +2,7 @@ package git
 
 import (
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/xanzy/go-gitlab"
 	"gitlabAnalyzer/settings"
 	"log"
@@ -44,4 +45,21 @@ func cloneUrlOf(project *gitlab.Project) string {
 		"http://",
 	)
 	return cloneUrl
+}
+
+func CheckoutBranch(repo *git.Repository, branch *gitlab.Branch) error {
+	worktree, err := repo.Worktree()
+	if err != nil {
+		log.Println("could not checkout branch", branch.Name, ":", err)
+		return err
+	}
+	referenceName := plumbing.NewRemoteReferenceName("origin", branch.Name)
+	errCheckout := worktree.Checkout(&git.CheckoutOptions{
+		Branch: referenceName,
+	})
+	if errCheckout != nil {
+		log.Println("could not checkout branch", branch.Name, ":", errCheckout)
+		return errCheckout
+	}
+	return nil
 }

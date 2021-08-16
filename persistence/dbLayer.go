@@ -11,7 +11,7 @@ import (
 
 var db = initDb()
 
-func initDb() *gorm.DB { //TODO Felder in Variablen
+func initDb() *gorm.DB {
 	settings.InitSettings()
 	dsn := "host=" + settings.Struct.PostgresHost +
 		" user=" + settings.Struct.PostgresUser +
@@ -28,10 +28,14 @@ func initDb() *gorm.DB { //TODO Felder in Variablen
 	if errAutoMigrate != nil {
 		log.Fatalln("error while initalizing to database:", errAutoMigrate)
 	}
+	err := dbCon.AutoMigrate(&model.Branch{})
+	if err != nil {
+		log.Fatalln("error while initalizing to database:", errAutoMigrate)
+	}
 	return dbCon
 }
 
-func DBObjectOf(apiInformation *gitlab.Project) *model.Project {
+func DBObjectOfProject(apiInformation *gitlab.Project) *model.Project {
 	var result *model.Project = nil
 	db.First(&result, apiInformation.ID)
 	if result.ID == 0 {
@@ -45,9 +49,45 @@ func DBObjectOf(apiInformation *gitlab.Project) *model.Project {
 	return result
 }
 
+func DBObjectOfBranch(project *model.Project, branch *gitlab.Branch, analyzed bool) *model.Branch {
+	var branches []*model.Branch
+	db.Where("Name = ? AND project_id = ?", branch.Name, project.ID).Find(&branches)
+	if len(branches) > 0 {
+		if len(branches) > 1 {
+			log.Println("For the project", project.Name, "(", project.ID, ") exist multiple objects for branch", branch.Name, "! This must not be!")
+		}
+		dbBranch := branches[0]
+		dbBranch.Protected = branch.Protected
+		dbBranch.DevelopersCanMerge = branch.DevelopersCanMerge
+		dbBranch.DevelopersCanPush = branch.DevelopersCanPush
+		dbBranch.Analyzed = analyzed
+		dbBranch.DefaultBranch = branch.Default
+		dbBranch.Merged = branch.Merged
+		dbBranch.LastCommitTime = branch.Commit.CommittedDate
+		dbBranch.LastCommitShortID = branch.Commit.ShortID
+		db.Save(dbBranch)
+		return dbBranch
+	} else {
+		branch := &model.Branch{
+			Project:            *project,
+			Analyzed:           analyzed,
+			Name:               branch.Name,
+			WebUrl:             branch.WebURL,
+			DevelopersCanMerge: branch.DevelopersCanMerge,
+			DevelopersCanPush:  branch.DevelopersCanPush,
+			Protected:          branch.Protected,
+			DefaultBranch:      branch.Default,
+			Merged:             branch.Merged,
+			LastCommitTime:     branch.Commit.CommittedDate,
+			LastCommitShortID:  branch.Commit.ShortID,
+		}
+		db.Create(branch)
+		return branch
+	}
+}
+
 func updateProjectFields(project *model.Project, apiInformation *gitlab.Project) {
 	project.Description = apiInformation.Description
-	project.DefaultBranch = apiInformation.DefaultBranch
 	project.SSHURLToRepo = apiInformation.SSHURLToRepo
 	project.HTTPURLToRepo = apiInformation.HTTPURLToRepo
 	project.WebURL = apiInformation.WebURL
@@ -77,9 +117,9 @@ func updateProjectFields(project *model.Project, apiInformation *gitlab.Project)
 	project.RemoveSourceBranchAfterMerge = apiInformation.RemoveSourceBranchAfterMerge
 	project.LFSEnabled = apiInformation.LFSEnabled
 	project.RequestAccessEnabled = apiInformation.RequestAccessEnabled
-	//if apiInformation.ForkedFromProject != nil {
-	//	project.ForkedFromProject = apiInformation.ForkedFromProject.ID
-	//}
+	if apiInformation.ForkedFromProject != nil {
+		project.ForkedFromProject = apiInformation.ForkedFromProject.ID
+	}
 	project.PackagesEnabled = apiInformation.PackagesEnabled
 	project.AutocloseReferencedIssues = apiInformation.AutocloseReferencedIssues
 	project.SuggestionCommitMessage = apiInformation.SuggestionCommitMessage

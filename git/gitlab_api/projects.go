@@ -2,12 +2,10 @@ package gitlab_api
 
 import (
 	"github.com/xanzy/go-gitlab"
-	"gitlabAnalyzer/settings"
 	"log"
 )
 
-func GetProjects() []*gitlab.Project {
-	git, _ := gitlab.NewClient(settings.Struct.GitlabPersonalToken, gitlab.WithBaseURL(settings.Struct.GitlabBaseurl+"api/v4"))
+func Projects() []*gitlab.Project {
 	opt := &gitlab.ListProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
@@ -15,7 +13,7 @@ func GetProjects() []*gitlab.Project {
 		},
 	}
 	var projects []*gitlab.Project
-	projects, header, err := git.Projects.ListProjects(opt)
+	projects, header, err := getGitlabClient().Projects.ListProjects(opt)
 	log.Println("handled page 1 of", header.TotalPages, "(total pages are not known unless first page is handled)")
 	if err != nil {
 		log.Fatalln("error while fetching Gitlab-projects", err)
@@ -28,7 +26,7 @@ func GetProjects() []*gitlab.Project {
 				Page:    page,
 			},
 		}
-		addedProjects, _, err := git.Projects.ListProjects(optOtherPages)
+		addedProjects, _, err := getGitlabClient().Projects.ListProjects(optOtherPages)
 		if err != nil {
 			log.Fatalln("error while fetching Gitlab-projects", err)
 		}

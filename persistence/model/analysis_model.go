@@ -9,5 +9,5 @@ type AnalysisResult struct {
 	ID       uint `gorm:"primaryKey"`
 	Maven    bool
 	Version  uint
-	BranchId int
+	BranchId uint
 }

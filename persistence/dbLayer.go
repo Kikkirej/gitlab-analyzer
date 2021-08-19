@@ -20,17 +20,21 @@ func initDb() *gorm.DB {
 		" port=" + settings.Struct.PostgresPort +
 		" sslmode=" + settings.Struct.PostgresSslmode +
 		" TimeZone=Europe/Berlin"
-	dbCon, errAutoMigrate := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if errAutoMigrate != nil {
-		log.Fatalln("error while connecting to database:", errAutoMigrate)
+	dbCon, errOpen := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if errOpen != nil {
+		log.Fatalln("error while connecting to database:", errOpen)
 	}
-	errAutoMigrate = dbCon.AutoMigrate(&model.Project{})
-	if errAutoMigrate != nil {
-		log.Fatalln("error while initializing to database:", errAutoMigrate)
+	errAutoMigrateProject := dbCon.AutoMigrate(&model.Project{})
+	if errAutoMigrateProject != nil {
+		log.Fatalln("error while initializing to database:", errAutoMigrateProject)
 	}
-	err := dbCon.AutoMigrate(&model.Branch{})
-	if err != nil {
-		log.Fatalln("error while initializing to database:", errAutoMigrate)
+	errAutoMigrateBranch := dbCon.AutoMigrate(&model.Branch{})
+	if errAutoMigrateBranch != nil {
+		log.Fatalln("errAutoMigrateBranchor while initializing to database:", errAutoMigrateBranch)
+	}
+	errAutoMigrateMavenModule := dbCon.AutoMigrate(&model.MavenModule{})
+	if errAutoMigrateMavenModule != nil {
+		log.Fatalln("errAutoMigrateMavenModuleor while initializing to database:", errAutoMigrateMavenModule)
 	}
 	return dbCon
 }
@@ -137,4 +141,8 @@ func CreateAnalysisAndConnectToBranch(branch *model.Branch) *model.AnalysisResul
 
 func SaveAnalysisResult(result *model.AnalysisResult) {
 	db.Save(result)
+}
+
+func SaveMavenModule(module *model.MavenModule) {
+	db.Save(module)
 }

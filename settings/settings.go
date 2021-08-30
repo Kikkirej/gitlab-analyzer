@@ -115,8 +115,14 @@ func initPostgresSettings() {
 		Struct.PostgresPort = "5432"
 	}
 	Struct.PostgresUser = os.Getenv(PostgresUserEnvName)
+	if Struct.PostgresUser == "" {
+		Struct.PostgresUser = "postgres"
+	}
 	Struct.PostgresPassword = os.Getenv(PostgresPasswordEnvName)
 	Struct.PostgresDbname = os.Getenv(PostgresDbnameEnvName)
+	if Struct.PostgresDbname == "" {
+		Struct.PostgresDbname = "postgres"
+	}
 	Struct.PostgresSslmode = os.Getenv(PostgresSslmodeEnvName)
 	if Struct.PostgresSslmode == "" {
 		Struct.PostgresSslmode = "disable"

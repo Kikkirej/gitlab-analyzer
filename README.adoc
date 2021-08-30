@@ -10,13 +10,24 @@ This tool connects to the GitLab-API, gets all projects and handles them with a 
 | GITLAB_PROJECT_ROOT | Namespace-Prefix |  /orgunit
 | WORKING_DIR | Working Directory | "C:\temp" oder "/tmp/"
 |===
-=== Datenbank
+=== Database
 |===
-| Environment
-| POSTGRES_HOST
-| POSTGRES_USER
-| POSTGRES_PASSWORD
-| POSTGRES_DBNAME
-| POSTGRES_PORT
-| POSTGRES_SSLMODE
+| Environment | Description | Default Value
+| POSTGRES_HOST | host for connection | localhost
+| POSTGRES_PORT | port for connection | 5432
+| POSTGRES_USER | user for authentication | postgres
+| POSTGRES_PASSWORD | password for authentication | -
+| POSTGRES_DBNAME | name of database | postgres
+| POSTGRES_SSLMODE | sslmode enabled | false
 |===
+== Start
+=== Postgres (optional)
+[source, yaml]
+----
+include::docker-compose.yml[]
+----
+== Application
+[source,bash]
+----
+docker run --rm -it --name gitlabAnalyzer -e GITLAB_BASE_URL=https://gitlab/ -e GITLAB_PERSONAL_TOKEN=12345 -e GITLAB_PROJECT_ROOT=example/ -e POSTGRES_HOST=localhost -e POSTGRES_PASSWORD=gitlab ghcr.io/kikkirej/gitlab-analyzer:main
+----

@@ -14,10 +14,10 @@ func Projects() []*gitlab.Project {
 	}
 	var projects []*gitlab.Project
 	projects, header, err := getGitlabClient().Projects.ListProjects(opt)
-	log.Println("handled page 1 of", header.TotalPages, "(total pages are not known unless first page is handled)")
 	if err != nil {
 		log.Fatalln("error while fetching Gitlab-projects", err)
 	}
+	log.Println("handled page 1 of", header.TotalPages, "(total pages are not known unless first page is handled)")
 	for page := 2; page <= header.TotalPages; page++ {
 		log.Println("handle page", page, "of", header.TotalPages)
 		optOtherPages := &gitlab.ListProjectsOptions{

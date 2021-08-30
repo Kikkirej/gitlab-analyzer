@@ -12,7 +12,21 @@ import (
 
 func processPomFiles(data dto.AnalysisData, modulePaths []string, result *model.AnalysisResult) []model.MavenModule {
 	var mavenModules []model.MavenModule
-
+	var mavenModulesDB []model.MavenModule
+	persistence.MavenModulesForAnalysis(&mavenModulesDB, result)
+	//delete not found modules
+	for _, dbModule := range mavenModulesDB {
+		foundModulePath := false
+		for _, modulePath := range modulePaths {
+			if dbModule.Path == modulePath {
+				foundModulePath = true
+				continue
+			}
+		}
+		if foundModulePath == false {
+			persistence.DeleteMavenModule(dbModule)
+		}
+	}
 	for _, modulePath := range modulePaths {
 		pomFile, err := ioutil.ReadFile(data.Path + modulePath + "pom.xml")
 		if err != nil {
@@ -24,7 +38,9 @@ func processPomFiles(data dto.AnalysisData, modulePaths []string, result *model.
 			log.Println(data.Path+modulePath, ": could not be unmarshalled:", err)
 			continue
 		}
-		mavenModule := model.MavenModule{Path: modulePath, ArtifactID: project.ArtifactId}
+
+		mavenModule := GetMavenModule(modulePath, mavenModulesDB)
+		mavenModule.ArtifactID = project.ArtifactId
 		if project.GroupId == "" {
 			mavenModule.GroupID = project.Parent.GroupId
 		} else {
@@ -43,9 +59,20 @@ func processPomFiles(data dto.AnalysisData, modulePaths []string, result *model.
 			mavenModule.ParentArtifactID = project.Parent.ArtifactId
 		}
 
-		mavenModule.Analysis = *result
+		mavenModule.Packaging = project.Packaging
+
+		mavenModule.Analysis = result
 		persistence.SaveMavenModule(&mavenModule)
 		mavenModules = append(mavenModules, mavenModule)
 	}
 	return mavenModules
+}
+
+func GetMavenModule(path string, allMavenModules []model.MavenModule) model.MavenModule {
+	for _, module := range allMavenModules {
+		if module.Path == path {
+			return module
+		}
+	}
+	return model.MavenModule{Path: path}
 }

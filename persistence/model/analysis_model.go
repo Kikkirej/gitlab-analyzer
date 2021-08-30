@@ -6,8 +6,6 @@ import (
 
 type AnalysisResult struct {
 	gorm.Model
-	ID       uint `gorm:"primaryKey"`
-	Maven    bool
-	Version  uint
-	BranchId uint
+	Maven   bool
+	Version uint
 }

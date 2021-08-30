@@ -32,7 +32,7 @@ func initDb() *gorm.DB {
 	if errAutoMigrateBranch != nil {
 		log.Fatalln("errAutoMigrateBranchor while initializing to database:", errAutoMigrateBranch)
 	}
-	errAutoMigrateMavenModule := dbCon.AutoMigrate(&model.MavenModule{})
+	errAutoMigrateMavenModule := dbCon.AutoMigrate(&model.MavenModuleDependency{})
 	if errAutoMigrateMavenModule != nil {
 		log.Fatalln("errAutoMigrateMavenModuleor while initializing to database:", errAutoMigrateMavenModule)
 	}
@@ -73,7 +73,7 @@ func DBObjectOfBranch(project *model.Project, branch *gitlab.Branch, analyzed bo
 		return dbBranch
 	} else {
 		branch := &model.Branch{
-			Project:            *project,
+			Project:            project,
 			Analyzed:           analyzed,
 			Name:               branch.Name,
 			WebUrl:             branch.WebURL,
@@ -84,6 +84,9 @@ func DBObjectOfBranch(project *model.Project, branch *gitlab.Branch, analyzed bo
 			Merged:             branch.Merged,
 			LastCommitTime:     branch.Commit.CommittedDate,
 			LastCommitShortID:  branch.Commit.ShortID,
+		}
+		if branch.CurrentAnalysis != nil && branch.CurrentAnalysis.ID == 0 {
+			branch.CurrentAnalysis = nil
 		}
 		db.Create(branch)
 		return branch
@@ -130,11 +133,19 @@ func updateProjectFields(project *model.Project, apiInformation *gitlab.Project)
 }
 
 func CreateAnalysisAndConnectToBranch(branch *model.Branch) *model.AnalysisResult {
+	if branch.CurrentAnalysisId != 0 {
+		var result *model.AnalysisResult = nil
+		db.First(&result, branch.CurrentAnalysisId)
+		if result.Version != settings.CurrentVersion() {
+			result.Version = settings.CurrentVersion()
+			db.Save(result)
+		}
+		return result
+	}
 	analysisResult := &model.AnalysisResult{}
-	analysisResult.BranchId = branch.ID
 	analysisResult.Version = settings.CurrentVersion()
 	db.Create(analysisResult)
-	branch.CurrentAnalysis = *analysisResult
+	branch.CurrentAnalysis = analysisResult
 	db.Save(branch)
 	return analysisResult
 }
@@ -143,6 +154,60 @@ func SaveAnalysisResult(result *model.AnalysisResult) {
 	db.Save(result)
 }
 
+func MavenModulesForAnalysis(mavenmodules *[]model.MavenModule, result *model.AnalysisResult) {
+	db.Where("analysis_id=?", result.ID).Find(&mavenmodules)
+}
+
 func SaveMavenModule(module *model.MavenModule) {
 	db.Save(module)
+}
+
+func DeleteMavenModule(mavenModule model.MavenModule) {
+	db.Delete(&mavenModule)
+}
+
+func GetMavenDependency(groupId string, artifactId string) *model.MavenDependency {
+	var result *model.MavenDependency = nil
+	db.Where("group_id=? and artifact_id=?", groupId, artifactId).Find(&result)
+	if result.ID == 0 {
+		result = &model.MavenDependency{GroupID: groupId, ArtifactID: artifactId}
+		db.Create(&result)
+	}
+	return result
+}
+
+func GetMavenModuleDependency(dependency *model.MavenDependency, module model.MavenModule, parent *model.MavenModuleDependency, version string, scope string, packaging string, depth uint) *model.MavenModuleDependency {
+	result := searchMavenModuleDependency(dependency, module, parent, packaging, depth)
+	if result.ID == 0 {
+		result = &model.MavenModuleDependency{Dependency: dependency, Module: &module, Scope: scope, Version: version, Packaging: packaging, Depth: depth}
+		if parent.ID != 0 {
+			result.Parent = parent
+		}
+		db.Create(&result)
+	} else if result.Version != version || result.Scope != scope {
+		result.Version = version
+		result.Scope = scope
+		db.Save(&result)
+	}
+	return result
+}
+
+func searchMavenModuleDependency(dependency *model.MavenDependency, module model.MavenModule, parent *model.MavenModuleDependency, packaging string, depth uint) *model.MavenModuleDependency {
+	where := db.Where("dependency_id=? and module_id=? and depth=? and packaging=?", dependency.ID, module.ID, depth, packaging)
+	if parent.ID != 0 {
+		where.Where("parent_id=?", parent.ID)
+	} else {
+		where.Where("scope=?", "")
+	}
+	var result *model.MavenModuleDependency = nil
+	where.Find(&result)
+	return result
+}
+
+func GetDependenciesForModule(module model.MavenModule, result *[]model.MavenModuleDependency) {
+	db.Where("module_id=?", module.ID).Find(&result)
+}
+
+func DeleteMavenModuleDependency(tobedeleted model.MavenModuleDependency) {
+	db.Delete(&tobedeleted)
 }

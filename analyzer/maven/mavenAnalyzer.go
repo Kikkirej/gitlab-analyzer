@@ -44,7 +44,14 @@ func (m Maven) Apply(data dto.AnalysisData, result *model.AnalysisResult) {
 	result.Maven = true
 	persistence.SaveAnalysisResult(result)
 	modulePaths := mavenModulesInPath(data.Path, string(os.PathSeparator), 0, []string{})
-	processPomFiles(data, modulePaths, result)
+	mavenModules := processPomFiles(data, modulePaths, result)
+	processDependencies(data, mavenModules)
+}
+
+func processDependencies(data dto.AnalysisData, modules []model.MavenModule) {
+	for _, module := range modules {
+		getAndCreateDependenciesFor(module, data)
+	}
 }
 
 func mavenModulesInPath(basePath string, searchPath string, depth uint, modules []string) []string {

@@ -41,7 +41,7 @@ func handleProject(project *gitlab.Project) {
 			if err != nil {
 				continue
 			}
-			analyzer.AnalyzeBranch(dto.AnalysisData{dbProject, branchDb, clonePath, repo})
+			analyzer.AnalyzeBranch(dto.AnalysisData{Project: dbProject, Branch: branchDb, Path: clonePath, Repo: repo})
 		} else {
 			persistence.DBObjectOfBranch(dbProject, branch, false)
 		}

@@ -11,21 +11,27 @@ type MavenModule struct {
 	ParentArtifactID string
 	ParentGroupID    string
 	ParentVersion    string
-	Analysis         AnalysisResult `gorm:"foreignKey:AnalysisId"`
+	Analysis         *AnalysisResult `gorm:"foreignKey:AnalysisId"`
 	AnalysisId       uint
+	Packaging        string
 }
 
 type MavenModuleDependency struct {
 	gorm.Model
 	Scope        string
 	Version      string
-	Dependency   MavenDependency `gorm:"foreignKey:DependencyID"`
+	Packaging    string
+	Depth        uint
+	Dependency   *MavenDependency `gorm:"foreignKey:DependencyID"`
 	DependencyID uint
-	Module       MavenModule
+	Module       *MavenModule `gorm:"foreignKey:ModuleID"`
+	ModuleID     uint
+	Parent       *MavenModuleDependency `gorm:"foreignKey:ParentID"`
+	ParentID     uint
 }
 
 type MavenDependency struct {
 	gorm.Model
-	ArtifactID string
 	GroupID    string
+	ArtifactID string
 }

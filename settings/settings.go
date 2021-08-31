@@ -12,6 +12,7 @@ const GitlabPersonalTokenEnvName = "GITLAB_PERSONAL_TOKEN"
 const GitlabProjectRootEnvName = "GITLAB_PROJECT_ROOT"
 const WorkingDirEnvName = "WORKING_DIR"
 const BranchesToAnalyzeEnvName = "BRANCHES_TO_ANALYZE"
+const MavenCommandEnvName = "MVN_CMD"
 
 const PostgresHostEnvName = "POSTGRES_HOST"
 const PostgresUserEnvName = "POSTGRES_USER"
@@ -40,6 +41,7 @@ type SettingsStruct struct {
 	PostgresDbname   string
 	PostgresPort     string
 	PostgresSslmode  string
+	MavenCommand     string
 }
 
 var Struct = SettingsStruct{Initialized: false}
@@ -99,6 +101,13 @@ func InitSettings() {
 		Struct.BranchesToAnalyze = strings.Split(branchesToAnalyze, ";")
 	} else {
 		Struct.BranchesToAnalyze = []string{}
+	}
+
+	mavenCommand := os.Getenv(MavenCommandEnvName)
+	if mavenCommand != "" {
+		Struct.MavenCommand = mavenCommand
+	} else {
+		Struct.MavenCommand = "mvn"
 	}
 
 	initPostgresSettings()

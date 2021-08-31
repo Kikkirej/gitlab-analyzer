@@ -6,6 +6,7 @@ import (
 	"gitlabAnalyzer/dto"
 	"gitlabAnalyzer/persistence"
 	"gitlabAnalyzer/persistence/model"
+	"gitlabAnalyzer/settings"
 	"log"
 	"os/exec"
 	"strings"
@@ -13,7 +14,7 @@ import (
 
 func getAndCreateDependenciesFor(module model.MavenModule, data dto.AnalysisData) []model.MavenModuleDependency {
 	dependenciesTgfPath := data.Path + module.Path + "dependencies.tgf"
-	command := exec.Command("mvn", "-pl", ":"+module.ArtifactID, "dependency:tree", "-DoutputEncoding=utf-8", "-DoutputFile="+dependenciesTgfPath, "-DoutputType=tgf")
+	command := exec.Command(settings.Struct.MavenCommand, "-pl", ":"+module.ArtifactID, "dependency:tree", "-DoutputEncoding=utf-8", "-DoutputFile="+dependenciesTgfPath, "-DoutputType=tgf")
 	command.Dir = data.Path + module.Path
 	output, err := command.CombinedOutput()
 	if err != nil {

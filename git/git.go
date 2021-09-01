@@ -3,8 +3,8 @@ package git
 import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"github.com/xanzy/go-gitlab"
-	"gitlabAnalyzer/settings"
 	"log"
 	"os"
 	"strconv"

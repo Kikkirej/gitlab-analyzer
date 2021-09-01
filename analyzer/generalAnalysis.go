@@ -1,10 +1,10 @@
 package analyzer
 
 import (
-	"gitlabAnalyzer/analyzer/maven"
-	"gitlabAnalyzer/dto"
-	"gitlabAnalyzer/persistence"
-	"gitlabAnalyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/analyzer/maven"
+	"github.com/kikkirej/gitlab-analyzer/dto"
+	"github.com/kikkirej/gitlab-analyzer/persistence"
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
 	"log"
 )
 

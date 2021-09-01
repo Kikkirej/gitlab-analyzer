@@ -1,8 +1,8 @@
 package gitlab_api
 
 import (
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"github.com/xanzy/go-gitlab"
-	"gitlabAnalyzer/settings"
 	"log"
 )
 

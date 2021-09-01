@@ -229,10 +229,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351 h1:DowS9hvgyYSX4TO5NpyC606/Z4SxnNYbT+WX27or6Ck=
 github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
-github.com/kikkirej/go-tgf v0.0.0-20210822085247-8ca5cc38bc9c h1:HNrsJ9bjM2jmjaU473zV4hG3EXmPZ9rD/3jOaJAnE/A=
-github.com/kikkirej/go-tgf v0.0.0-20210822085247-8ca5cc38bc9c/go.mod h1:BlJIoEfJadfmRRj7NEYeDoGDjxNzqTuZtJ7BCxEpSvY=
-github.com/kikkirej/gotgf v0.0.0-20210822084457-0f4258029918 h1:FD1l5ggio+BpjoCDfjKlZ5ywgVfiHrxaKBu0OwoBoGQ=
-github.com/kikkirej/gotgf v0.0.0-20210822084457-0f4258029918/go.mod h1:MfQZ22jFanzyyO6A57mJSZQQWOyaIXaTvT9kJo3Jjdg=
+github.com/kikkirej/go-tgf v0.0.0-20210901132930-73f07a929176 h1:nKrew91kHJwvXM7WvaRIaC0wMqsKFURKQxZJi50a5sE=
+github.com/kikkirej/go-tgf v0.0.0-20210901132930-73f07a929176/go.mod h1:BlJIoEfJadfmRRj7NEYeDoGDjxNzqTuZtJ7BCxEpSvY=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=

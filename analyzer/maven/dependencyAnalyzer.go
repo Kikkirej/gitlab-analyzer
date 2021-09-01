@@ -1,12 +1,12 @@
 package maven
 
 import (
+	"github.com/kikkirej/gitlab-analyzer/dto"
+	"github.com/kikkirej/gitlab-analyzer/persistence"
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"github.com/kikkirej/go-tgf"
-	"github.com/kikkirej/gotgf/ast"
-	"gitlabAnalyzer/dto"
-	"gitlabAnalyzer/persistence"
-	"gitlabAnalyzer/persistence/model"
-	"gitlabAnalyzer/settings"
+	"github.com/kikkirej/go-tgf/ast"
 	"log"
 	"os/exec"
 	"strings"

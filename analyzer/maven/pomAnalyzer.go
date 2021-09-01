@@ -3,9 +3,9 @@ package maven
 import (
 	"encoding/xml"
 	"github.com/creekorful/mvnparser"
-	"gitlabAnalyzer/dto"
-	"gitlabAnalyzer/persistence"
-	"gitlabAnalyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/dto"
+	"github.com/kikkirej/gitlab-analyzer/persistence"
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
 	"io/ioutil"
 	"log"
 )

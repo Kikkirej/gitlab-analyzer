@@ -2,7 +2,7 @@ package dto
 
 import (
 	"github.com/go-git/go-git/v5"
-	"gitlabAnalyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
 )
 
 type AnalysisData struct {

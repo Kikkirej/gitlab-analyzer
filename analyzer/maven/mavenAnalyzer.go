@@ -1,9 +1,9 @@
 package maven
 
 import (
-	"gitlabAnalyzer/dto"
-	"gitlabAnalyzer/persistence"
-	"gitlabAnalyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/dto"
+	"github.com/kikkirej/gitlab-analyzer/persistence"
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
 	"io/ioutil"
 	"log"
 	"os"
@@ -72,7 +72,7 @@ func mavenModulesInPath(basePath string, searchPath string, depth uint, modules 
 	return modules
 }
 
-func (m Maven) NotApplied(data dto.AnalysisData, result *model.AnalysisResult) {
+func (m Maven) NotApplied(_ dto.AnalysisData, result *model.AnalysisResult) {
 	result.Maven = false
 	persistence.SaveAnalysisResult(result)
 }

@@ -1,9 +1,9 @@
 package persistence
 
 import (
+	"github.com/kikkirej/gitlab-analyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"github.com/xanzy/go-gitlab"
-	"gitlabAnalyzer/persistence/model"
-	"gitlabAnalyzer/settings"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"

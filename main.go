@@ -1,13 +1,13 @@
 package main
 
 import (
+	"github.com/kikkirej/gitlab-analyzer/analyzer"
+	"github.com/kikkirej/gitlab-analyzer/dto"
+	"github.com/kikkirej/gitlab-analyzer/git"
+	"github.com/kikkirej/gitlab-analyzer/git/gitlab_api"
+	"github.com/kikkirej/gitlab-analyzer/persistence"
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"github.com/xanzy/go-gitlab"
-	"gitlabAnalyzer/analyzer"
-	"gitlabAnalyzer/dto"
-	"gitlabAnalyzer/git"
-	"gitlabAnalyzer/git/gitlab_api"
-	"gitlabAnalyzer/persistence"
-	"gitlabAnalyzer/settings"
 	"log"
 	"os"
 	"strings"

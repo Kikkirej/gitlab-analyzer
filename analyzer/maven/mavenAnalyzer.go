@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sync"
 )
 
 type Maven struct{}
@@ -49,8 +50,14 @@ func (m Maven) Apply(data dto.AnalysisData, result *model.AnalysisResult) {
 }
 
 func processDependencies(data dto.AnalysisData, modules []model.MavenModule) {
+	var wg sync.WaitGroup
 	for _, module := range modules {
-		getAndCreateDependenciesFor(module, data)
+		wg.Add(1)
+		go func(module model.MavenModule, data dto.AnalysisData) {
+
+			defer wg.Done()
+			getAndCreateDependenciesFor(module, data)
+		}(module, data)
 	}
 }
 

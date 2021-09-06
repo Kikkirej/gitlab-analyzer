@@ -11,16 +11,22 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 func main() {
 	settings.InitSettings()
 	projects := gitlab_api.Projects()
 	log.Println("number of identified projects:", len(projects))
+	var wg sync.WaitGroup
 	for _, project := range projects {
 		if shouldBeAnalyzed(project) {
 			log.Println("analyze project:", project.PathWithNamespace, " (", project.ID, ")")
-			handleProject(project)
+			wg.Add(1)
+			go func(project *gitlab.Project) {
+				defer wg.Done()
+				handleProject(project)
+			}(project)
 		} else {
 			//log.Println("project does not meet criteria:", project.PathWithNamespace, "(", project.ID, ")")
 		}

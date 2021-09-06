@@ -1,6 +1,7 @@
 package analyzer
 
 import (
+	"github.com/kikkirej/gitlab-analyzer/analyzer/docker"
 	"github.com/kikkirej/gitlab-analyzer/analyzer/maven"
 	"github.com/kikkirej/gitlab-analyzer/dto"
 	"github.com/kikkirej/gitlab-analyzer/persistence"
@@ -9,7 +10,7 @@ import (
 )
 
 var (
-	analyzers = []Analyzer{maven.Maven{}}
+	analyzers = []Analyzer{maven.Maven{}, docker.DockerFile{}}
 )
 
 func AnalyzeBranch(data dto.AnalysisData) {

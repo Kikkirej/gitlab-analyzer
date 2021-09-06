@@ -59,6 +59,7 @@ func processDependencies(data dto.AnalysisData, modules []model.MavenModule) {
 			getAndCreateDependenciesFor(module, data)
 		}(module, data)
 	}
+	wg.Wait()
 }
 
 func mavenModulesInPath(basePath string, searchPath string, depth uint, modules []string) []string {

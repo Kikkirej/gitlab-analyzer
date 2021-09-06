@@ -31,6 +31,7 @@ func main() {
 			//log.Println("project does not meet criteria:", project.PathWithNamespace, "(", project.ID, ")")
 		}
 	}
+	wg.Wait()
 }
 
 func handleProject(project *gitlab.Project) {

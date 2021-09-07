@@ -18,14 +18,20 @@ func main() {
 	settings.InitSettings()
 	projects := gitlab_api.Projects()
 	log.Println("number of identified projects:", len(projects))
+
+	maxAnalyzedProjectsParrallel := 10
+	guard := make(chan struct{}, maxAnalyzedProjectsParrallel)
+
 	var wg sync.WaitGroup
 	for _, project := range projects {
 		if shouldBeAnalyzed(project) {
 			log.Println("analyze project:", project.PathWithNamespace, " (", project.ID, ")")
+			guard <- struct{}{}
 			wg.Add(1)
 			go func(project *gitlab.Project) {
 				defer wg.Done()
 				handleProject(project)
+				<-guard
 			}(project)
 		} else {
 			//log.Println("project does not meet criteria:", project.PathWithNamespace, "(", project.ID, ")")

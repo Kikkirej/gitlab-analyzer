@@ -10,7 +10,10 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"sync"
 )
+
+var mutexTGF sync.Mutex
 
 func getAndCreateDependenciesFor(module model.MavenModule, data dto.AnalysisData) []model.MavenModuleDependency {
 	dependenciesTgfPath := data.Path + module.Path + "dependencies.tgf"
@@ -21,7 +24,9 @@ func getAndCreateDependenciesFor(module model.MavenModule, data dto.AnalysisData
 		log.Println("error while getting dependencies:", err, "\nOutput:", string(output[:]))
 		return []model.MavenModuleDependency{}
 	}
+	mutexTGF.Lock()
 	_, rootNodes, allNodesUUID, err := tgf.ParseFile(dependenciesTgfPath)
+	mutexTGF.Unlock()
 	if err != nil {
 		log.Println("error, while processing tgf:", err)
 		return []model.MavenModuleDependency{}

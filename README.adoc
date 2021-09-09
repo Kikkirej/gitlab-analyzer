@@ -9,6 +9,7 @@ This tool connects to the GitLab-API, gets all projects and handles them with a 
 | GITLAB_PERSONAL_TOKEN | Personal Access Token | /
 | GITLAB_PROJECT_ROOT | Namespace-Prefix |  /orgunit
 | WORKING_DIR | Working Directory | "C:\temp" oder "/tmp/"
+| BRANCHES_TO_ANALYZE | Comma separated values of strings in branchname | /
 |===
 === Database
 |===

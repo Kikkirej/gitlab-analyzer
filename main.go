@@ -19,7 +19,7 @@ func main() {
 	projects := gitlab_api.Projects()
 	log.Println("number of identified projects:", len(projects))
 
-	maxAnalyzedProjectsParrallel := 10
+	maxAnalyzedProjectsParrallel := 3
 	guard := make(chan struct{}, maxAnalyzedProjectsParrallel)
 
 	var wg sync.WaitGroup

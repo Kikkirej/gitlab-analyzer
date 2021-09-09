@@ -11,6 +11,10 @@ import (
 
 var db = initDb()
 
+func getDb() *gorm.DB {
+	return db
+}
+
 func initDb() *gorm.DB {
 	settings.InitSettings()
 	dsn := "host=" + settings.Struct.PostgresHost +
@@ -133,7 +137,7 @@ func updateProjectFields(project *model.Project, apiInformation *gitlab.Project)
 }
 
 func CreateAnalysisAndConnectToBranch(branch *model.Branch) *model.AnalysisResult {
-	if branch.CurrentAnalysisId != 0 {
+	if branch.CurrentAnalysisId != nil {
 		var result *model.AnalysisResult = nil
 		db.First(&result, branch.CurrentAnalysisId)
 		if result.Version != settings.CurrentVersion() {

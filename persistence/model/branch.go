@@ -12,7 +12,7 @@ type Branch struct {
 	Project           *Project `gorm:"foreignKey:ProjectId"`
 	ProjectId         int
 	CurrentAnalysis   *AnalysisResult `gorm:"foreignKey:CurrentAnalysisId"`
-	CurrentAnalysisId uint
+	CurrentAnalysisId *uint
 
 	WebUrl             string
 	DevelopersCanMerge bool

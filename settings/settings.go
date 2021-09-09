@@ -13,6 +13,7 @@ const GitlabProjectRootEnvName = "GITLAB_PROJECT_ROOT"
 const WorkingDirEnvName = "WORKING_DIR"
 const BranchesToAnalyzeEnvName = "BRANCHES_TO_ANALYZE"
 const MavenCommandEnvName = "MVN_CMD"
+const SkipMavenDependencyScanEnvName = "SKIP_MAVEN_DEPENDENCY_SCAN"
 
 const PostgresHostEnvName = "POSTGRES_HOST"
 const PostgresUserEnvName = "POSTGRES_USER"
@@ -28,12 +29,13 @@ func CurrentVersion() uint {
 }
 
 type SettingsStruct struct {
-	Initialized         bool
-	GitlabBaseurl       string
-	GitlabPersonalToken string
-	GitlabProjectRoot   string
-	WorkingDir          string
-	BranchesToAnalyze   []string
+	Initialized             bool
+	GitlabBaseurl           string
+	GitlabPersonalToken     string
+	GitlabProjectRoot       string
+	WorkingDir              string
+	BranchesToAnalyze       []string
+	SkipMavenDependencyScan bool
 
 	PostgresHost     string
 	PostgresUser     string
@@ -109,6 +111,9 @@ func InitSettings() {
 	} else {
 		Struct.MavenCommand = "mvn"
 	}
+
+	skipMavenDependencyScanString := os.Getenv(SkipMavenDependencyScanEnvName)
+	Struct.SkipMavenDependencyScan = strings.ToLower(skipMavenDependencyScanString) == "true"
 
 	initPostgresSettings()
 	settingsInit.Unlock()

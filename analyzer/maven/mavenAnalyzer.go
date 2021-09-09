@@ -4,6 +4,7 @@ import (
 	"github.com/kikkirej/gitlab-analyzer/dto"
 	"github.com/kikkirej/gitlab-analyzer/persistence"
 	"github.com/kikkirej/gitlab-analyzer/persistence/model"
+	"github.com/kikkirej/gitlab-analyzer/settings"
 	"io/ioutil"
 	"log"
 	"os"
@@ -46,7 +47,13 @@ func (m Maven) Apply(data dto.AnalysisData, result *model.AnalysisResult) {
 	persistence.SaveAnalysisResult(result)
 	modulePaths := mavenModulesInPath(data.Path, string(os.PathSeparator), 0, []string{})
 	mavenModules := processPomFiles(data, modulePaths, result)
-	processDependencies(data, mavenModules)
+	if shouldProcessMavenDependencies() {
+		processDependencies(data, mavenModules)
+	}
+}
+
+func shouldProcessMavenDependencies() bool {
+	return !settings.Struct.SkipMavenDependencyScan
 }
 
 func processDependencies(data dto.AnalysisData, modules []model.MavenModule) {

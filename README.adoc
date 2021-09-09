@@ -10,6 +10,7 @@ This tool connects to the GitLab-API, gets all projects and handles them with a 
 | GITLAB_PROJECT_ROOT | Namespace-Prefix |  /orgunit
 | WORKING_DIR | Working Directory | "C:\temp" oder "/tmp/"
 | BRANCHES_TO_ANALYZE | Comma separated values of strings in branchname | /
+| SKIP_MAVEN_DEPENDENCY_SCAN | skips Maven Dependency-Scan | true/false
 |===
 === Database
 |===

@@ -15,6 +15,8 @@ import (
 
 var mutexTGF sync.Mutex
 
+var mutexDependencyAnalysis sync.Mutex
+
 func getAndCreateDependenciesFor(module model.MavenModule, data dto.AnalysisData) []model.MavenModuleDependency {
 	dependenciesTgfPath := data.Path + module.Path + "dependencies.tgf"
 	command := exec.Command(settings.Struct.MavenCommand, "-pl", ":"+module.ArtifactID, "dependency:tree", "-DoutputEncoding=utf-8", "-DoutputFile="+dependenciesTgfPath, "-DoutputType=tgf")
@@ -34,8 +36,10 @@ func getAndCreateDependenciesFor(module model.MavenModule, data dto.AnalysisData
 	if len(rootNodes) == 0 {
 		return []model.MavenModuleDependency{}
 	}
-	dependencyObjects := dependencyObjectsFromTree(getRootNode(rootNodes, module), allNodesUUID, []model.MavenModuleDependency{}, &model.MavenModuleDependency{}, module, 0)
 
+	mutexDependencyAnalysis.Lock()
+	dependencyObjects := dependencyObjectsFromTree(getRootNode(rootNodes, module), allNodesUUID, []model.MavenModuleDependency{}, &model.MavenModuleDependency{}, module, 0)
+	mutexDependencyAnalysis.Unlock()
 	deleteUnusedDependencies(module, dependencyObjects)
 	return dependencyObjects
 }
@@ -78,7 +82,8 @@ func dependencyObjectsFromTree(root ast.Node, allNodes map[string]ast.Edge, resu
 	for _, edgeId := range root.OutboundEdgeIds {
 		result = dependencyObjectsFromTree(allNodes[edgeId].OutboundNode, allNodes, result, dependency, module, depth+1)
 	}
-	return append(result, *dependency)
+	dependencies := append(result, *dependency)
+	return dependencies
 }
 
 func getMavenModuleDependency(root ast.Node, module model.MavenModule, parent *model.MavenModuleDependency, depth uint) *model.MavenModuleDependency {

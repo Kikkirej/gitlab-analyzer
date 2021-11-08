@@ -78,7 +78,7 @@ func shouldBeAnalyzed(project *gitlab.Project) bool {
 
 func branchShouldBeAnalyzed(branch *gitlab.Branch) bool {
 	if branch.Default {
-		log.Println("default branch is always analyzed(", branch.Name, ")")
+		log.Println("default branch is always analyzed(", branch.Name, ") in (URL:", branch.WebURL, ")")
 		return true
 	}
 	for _, configuredBranch := range settings.Struct.BranchesToAnalyze {

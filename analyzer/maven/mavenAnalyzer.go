@@ -16,7 +16,7 @@ type Maven struct{}
 const moduleMaxSearchDepth = 3
 
 func (m Maven) ShouldApply(data dto.AnalysisData) bool {
-	log.Println("for checking, wether", data.Path, "contains a Maven-Project a pom-File is look for")
+	log.Println("checking", data.Path, "contains a Maven-Project a pom-File (", data.Project.NameWithNamespace, ")")
 	return pathHasPom(data.Path, 0)
 }
 

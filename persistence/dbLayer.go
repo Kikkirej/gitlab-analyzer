@@ -40,6 +40,10 @@ func initDb() *gorm.DB {
 	if errAutoMigrateMavenModule != nil {
 		log.Fatalln("errAutoMigrateMavenModuleor while initializing to database:", errAutoMigrateMavenModule)
 	}
+	errAutoMigrateDockerfile := dbCon.AutoMigrate(&model.Dockerfile{})
+	if errAutoMigrateDockerfile != nil {
+		log.Fatalln("errAutoMigrateDockerfileor while initializing to database:", errAutoMigrateDockerfile)
+	}
 	return dbCon
 }
 
@@ -158,6 +162,10 @@ func SaveAnalysisResult(result *model.AnalysisResult) {
 	db.Save(result)
 }
 
+func SaveDockerfile(dockerfile *model.Dockerfile) {
+	db.Save(dockerfile)
+}
+
 func MavenModulesForAnalysis(mavenmodules *[]model.MavenModule, result *model.AnalysisResult) {
 	db.Where("analysis_id=?", result.ID).Find(&mavenmodules)
 }
@@ -214,4 +222,8 @@ func GetDependenciesForModule(module model.MavenModule, result *[]model.MavenMod
 
 func DeleteMavenModuleDependency(tobedeleted model.MavenModuleDependency) {
 	db.Delete(&tobedeleted)
+}
+
+func GetDockerfile(path string, analysis *model.AnalysisResult, result *[]model.Dockerfile) {
+	db.Where("analysis_id=? and path=?", analysis.ID, path).Find(&result)
 }

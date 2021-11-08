@@ -7,4 +7,5 @@ type Dockerfile struct {
 	Path       string
 	Analysis   *AnalysisResult `gorm:"foreignKey:AnalysisId"`
 	AnalysisId uint
+	LatestFrom string
 }

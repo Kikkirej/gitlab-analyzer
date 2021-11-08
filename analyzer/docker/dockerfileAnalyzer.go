@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"bufio"
 	"github.com/kikkirej/gitlab-analyzer/dto"
 	"github.com/kikkirej/gitlab-analyzer/persistence"
 	"github.com/kikkirej/gitlab-analyzer/persistence/model"
@@ -50,8 +51,41 @@ func (d DockerFile) Apply(data dto.AnalysisData, result *model.AnalysisResult) {
 func processDockerFiles(dockerfilePaths []string, data dto.AnalysisData, result *model.AnalysisResult) {
 	for _, dockerfilePath := range dockerfilePaths {
 		dockerfile := getDockerfile(dockerfilePath, result)
+		lines := getLines(data.Path + dockerfilePath)
+		dockerfile.LatestFrom = getLatestWhichBeginsWith("FROM", lines)
 		persistence.SaveDockerfile(dockerfile)
 	}
+}
+
+func getLatestWhichBeginsWith(searchString string, lines []string) string {
+	latest := ""
+	for _, line := range lines {
+		if strings.HasPrefix(strings.ToLower(line), strings.ToLower(searchString)) {
+			latest = line
+		}
+	}
+	latest = strings.ReplaceAll(strings.ToLower(latest), strings.ToLower(searchString), "")
+	latest = strings.TrimSpace(latest)
+	return latest
+}
+
+func getLines(textfile string) []string {
+	file, err := os.Open(textfile)
+
+	if err != nil {
+		log.Fatalf("failed opening dockerfile: %s", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+
+	file.Close()
+	return txtlines
 }
 
 func getDockerfile(path string, result *model.AnalysisResult) *model.Dockerfile {

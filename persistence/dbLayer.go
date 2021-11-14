@@ -232,5 +232,11 @@ func GetDockerimage(imagename string) *model.Dockerimage {
 	where := db.Where("image=?", imagename)
 	var result *model.Dockerimage = nil
 	where.Find(&result)
+	if result.Image == "" {
+		d := &model.Dockerimage{}
+		d.Image = imagename
+		db.Save(imagename)
+		return d
+	}
 	return result
 }

@@ -149,5 +149,5 @@ func InitPostgresSettings() {
 	if Struct.PostgresSslmode == "" {
 		Struct.PostgresSslmode = "disable"
 	}
-	postgresSettingsInit.Lock()
+	postgresSettingsInit.Unlock()
 }

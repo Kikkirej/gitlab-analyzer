@@ -62,11 +62,7 @@ func processPomFiles(data dto.AnalysisData, modulePaths []string, result *model.
 		if mavenModule.Repository != nil && project.Repository.URL == "" {
 			mavenModule.Repository = nil
 		} else if mavenModule.Repository == nil && project.Repository.URL != "" {
-			mavenModule.Repository = &model.MavenDistributionManagement{
-				RepoID: project.Repository.Id,
-				Name:   project.Repository.Name,
-				URL:    project.Repository.URL,
-			}
+			mavenModule.Repository = persistence.GetDistributionManagement(project.Repository.Id, project.Repository.Name, project.Repository.URL)
 		} else if mavenModule.Repository != nil &&
 			(mavenModule.Repository.RepoID != project.Repository.Id || mavenModule.Repository.Name != project.Repository.Name || mavenModule.Repository.URL != project.Repository.URL) {
 			mavenModule.Repository.RepoID = project.Repository.Id

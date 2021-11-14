@@ -235,7 +235,22 @@ func GetDockerimage(imagename string) *model.Dockerimage {
 	if result.Image == "" {
 		d := &model.Dockerimage{}
 		d.Image = imagename
-		db.Save(imagename)
+		db.Save(d)
+		return d
+	}
+	return result
+}
+
+func GetDistributionManagement(repo_id string, name string, url string) *model.MavenDistributionManagement {
+	where := db.Where("repo_id=? and name=? and url=?", repo_id, name, url)
+	var result *model.MavenDistributionManagement = nil
+	where.Find(&result)
+	if result.URL == "" {
+		d := &model.MavenDistributionManagement{}
+		d.RepoID = repo_id
+		d.Name = name
+		d.URL = url
+		db.Save(d)
 		return d
 	}
 	return result

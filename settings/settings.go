@@ -30,6 +30,7 @@ func CurrentVersion() uint {
 
 type SettingsStruct struct {
 	Initialized             bool
+	DBInitialized           bool
 	GitlabBaseurl           string
 	GitlabPersonalToken     string
 	GitlabProjectRoot       string
@@ -49,6 +50,7 @@ type SettingsStruct struct {
 var Struct = SettingsStruct{Initialized: false}
 
 var settingsInit sync.Mutex
+var postgresSettingsInit sync.Mutex
 
 func InitSettings() {
 	settingsInit.Lock()
@@ -115,11 +117,17 @@ func InitSettings() {
 	skipMavenDependencyScanString := os.Getenv(SkipMavenDependencyScanEnvName)
 	Struct.SkipMavenDependencyScan = strings.ToLower(skipMavenDependencyScanString) == "true"
 
-	initPostgresSettings()
+	InitPostgresSettings()
 	settingsInit.Unlock()
 }
 
-func initPostgresSettings() {
+func InitPostgresSettings() {
+	postgresSettingsInit.Lock()
+	if Struct.Initialized {
+		postgresSettingsInit.Unlock()
+		return
+	}
+	Struct.DBInitialized = true
 	Struct.PostgresHost = os.Getenv(PostgresHostEnvName)
 	if Struct.PostgresHost == "" {
 		Struct.PostgresHost = "localhost"
@@ -141,4 +149,5 @@ func initPostgresSettings() {
 	if Struct.PostgresSslmode == "" {
 		Struct.PostgresSslmode = "disable"
 	}
+	postgresSettingsInit.Lock()
 }

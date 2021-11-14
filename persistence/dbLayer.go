@@ -9,14 +9,14 @@ import (
 	"log"
 )
 
-var db = initDb()
+var db = InitDb()
 
 func getDb() *gorm.DB {
 	return db
 }
 
-func initDb() *gorm.DB {
-	settings.InitSettings()
+func InitDb() *gorm.DB {
+	settings.InitPostgresSettings()
 	dsn := "host=" + settings.Struct.PostgresHost +
 		" user=" + settings.Struct.PostgresUser +
 		" password=" + settings.Struct.PostgresPassword +

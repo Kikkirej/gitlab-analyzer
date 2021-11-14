@@ -47,4 +47,6 @@ type MavenDependency struct {
 	gorm.Model
 	GroupID    string
 	ArtifactID string
+	License    *License `gorm:"foreignKey:LicenseID"`
+	LicenseID  *uint
 }

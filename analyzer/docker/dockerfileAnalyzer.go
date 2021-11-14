@@ -52,7 +52,17 @@ func processDockerFiles(dockerfilePaths []string, data dto.AnalysisData, result 
 	for _, dockerfilePath := range dockerfilePaths {
 		dockerfile := getDockerfile(dockerfilePath, result)
 		lines := getLines(data.Path + dockerfilePath)
-		dockerfile.LatestFrom = getLatestWhichBeginsWith("FROM", lines)
+		imageWithTag := getLatestWhichBeginsWith("FROM", lines)
+		imageName := ""
+		if strings.Contains(imageWithTag, ":") {
+			imageNameTagArray := strings.Split(imageWithTag, ":")
+			imageName = imageNameTagArray[0]
+			dockerfile.Tag = imageNameTagArray[1]
+		} else {
+			dockerfile.Tag = "latest"
+			imageName = imageWithTag
+		}
+		dockerfile.LatestFrom = persistence.GetDockerimage(imageName)
 		persistence.SaveDockerfile(dockerfile)
 	}
 }

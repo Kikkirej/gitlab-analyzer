@@ -227,3 +227,10 @@ func DeleteMavenModuleDependency(tobedeleted model.MavenModuleDependency) {
 func GetDockerfile(path string, analysis *model.AnalysisResult, result *[]model.Dockerfile) {
 	db.Where("analysis_id=? and path=?", analysis.ID, path).Find(&result)
 }
+
+func GetDockerimage(imagename string) *model.Dockerimage {
+	where := db.Where("image=?", imagename)
+	var result *model.Dockerimage = nil
+	where.Find(&result)
+	return result
+}

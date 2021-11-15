@@ -9,6 +9,5 @@ type License struct {
 	Url         string
 	Deprecated  bool
 	OsiApproved bool
-	FsfApproved bool
 	Spdx        bool
 }

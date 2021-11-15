@@ -1,8 +1,11 @@
 package model
 
 type License struct {
-	ID        uint
-	Name      string
-	ShortName string
-	Url       string
+	Name        string
+	ID          string
+	Url         string
+	Deprecated  bool
+	OsiApproved bool
+	FsfApproved bool
+	Spdx        bool
 }
